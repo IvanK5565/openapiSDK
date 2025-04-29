@@ -1,0 +1,244 @@
+openapi: 3.0.3
+info:
+  title: Library System API
+  version: 1.0.0
+  description: REST API для керування книгами та авторами у бібліотечній системі
+
+servers:
+  - url: http://localhost:8000/api
+
+paths:
+
+  /authors:
+    get:
+      summary: Отримати список авторів
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Фільтр за іменем автора
+      responses:
+        '200':
+          description: Успішна відповідь
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+    post:
+      summary: Створити нового автора
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+      responses:
+        '201':
+          description: Автор створений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+
+  /authors/{id}:
+    get:
+      summary: Отримати автора за ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успішна відповідь
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Автор не знайдений
+    put:
+      summary: Оновити дані автора
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+      responses:
+        '200':
+          description: Автор оновлений
+        '404':
+          description: Автор не знайдений
+    delete:
+      summary: Видалити автора
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Успішно видалено
+        '404':
+          description: Автор не знайдений
+
+  /books:
+    get:
+      summary: Отримати список книг
+      parameters:
+        - in: query
+          name: author_id
+          schema:
+            type: integer
+          description: Фільтр за автором
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Пошук за назвою
+      responses:
+        '200':
+          description: Список книг
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      summary: Додати нову книгу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+      responses:
+        '201':
+          description: Книга створена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+
+  /books/{id}:
+    get:
+      summary: Отримати книгу за ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Книга знайдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Книга не знайдена
+    put:
+      summary: Оновити книгу
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+      responses:
+        '200':
+          description: Книга оновлена
+        '404':
+          description: Книга не знайдена
+    delete:
+      summary: Видалити книгу
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Книга видалена
+        '404':
+          description: Книга не знайдена
+
+components:
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bio:
+          type: string
+        birth_date:
+          type: string
+          format: date
+    AuthorInput:
+      type: object
+      required:
+        - name
+        - birth_date
+      properties:
+        name:
+          type: string
+        bio:
+          type: string
+        birth_date:
+          type: string
+          format: date
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        isbn:
+          type: string
+        published_date:
+          type: string
+          format: date
+        author_id:
+          type: integer
+    BookInput:
+      type: object
+      required:
+        - title
+        - isbn
+        - published_date
+        - author_id
+      properties:
+        title:
+          type: string
+        isbn:
+          type: string
+        published_date:
+          type: string
+          format: date
+        author_id:
+          type: integer
